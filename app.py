@@ -1,6 +1,8 @@
+# from translators.translators import *
+# import translators.translators.server as tss
 import translators as ts
 import translators.server as tss
-import polib
+# import polib
 import glob
 import io
 
@@ -130,24 +132,33 @@ import io
 
 def my_traslate(text):
     from_language, to_language = 'en', 'ru'
-    return tss.google(text, from_language, to_language)
+    return text
+    # print(translate_text(text))
+    # return tss.google(text, from_language, to_language)
     # return ts.translate_text(text, from_language, to_language)
     # return tss.yandex(text)
 
-
-with open("SemiAutomaticClassificationManual_v4\locale\\ru\LC_MESSAGES\installation_mac.po", "r+", encoding="utf-8") as f:
+with open("/home/caxap/projects/Qgis_translater/SemiAutomaticClassificationManual_v4/locale/ru/LC_MESSAGES/FAQ.po", "r+", encoding="utf-8") as f:
     old = f.read() # read everything in the file
     new_msgid = ''
+    new_msgs = []
     lines = old.split('\n')
     newLines = []
     for line in lines:
         words = line.split(' ')
         if words[0] == 'msgid' and ' '.join(words[1:]) != '""':
             new_msgid = ' '.join(words[1:])
-            print(new_msgid)
+            new_msgs = []
         elif words[0] == 'msgstr' and new_msgid != '':
             line = f'msgstr {my_traslate(new_msgid)}'
-            print(line)
+            if len(new_msgs) > 0:
+                for msg in new_msgs:
+                    line += f'\n{my_traslate(msg)}'
+            new_msgid = ''
+            new_msgs = []
+            # print(line)
+        elif words[0] and words[0][0] == '"':
+            new_msgs.append(line)
         newLines.append(line)
 
     f.seek(0) # rewind
